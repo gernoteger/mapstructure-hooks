@@ -64,7 +64,7 @@ func NewGelfConfig() interface {} {
 }
 
 
-func ExampleDecodeYaml() {
+func ExampleDecode() {
 	var loggerConfig = `
    level: INFO
    handlers:
