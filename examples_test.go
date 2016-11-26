@@ -22,7 +22,6 @@ import (
 	"github.com/inconshreveable/log15"
 	"gopkg.in/yaml.v2"
 	"fmt"
-	"github.com/gernoteger/mapstructure-hooks"
 )
 
 type LoggerConfig struct {
@@ -77,10 +76,10 @@ func ExampleDecodeYaml() {
 
 	// registers all handlers
 	// put into init()
-	hooks.RegisterInterface(HandlerConfigType,"kind")
+	RegisterInterface(HandlerConfigType,"kind")
 
-	hooks.Register(HandlerConfigType, "gelf", NewGelfConfig)
-	hooks.Register(HandlerConfigType, "file", NewFileConfig)
+	Register(HandlerConfigType, "gelf", NewGelfConfig)
+	Register(HandlerConfigType, "file", NewFileConfig)
 
 	// and init your config
 
@@ -92,7 +91,7 @@ func ExampleDecodeYaml() {
 
 
 	c := LoggerConfig{}
-	err = hooks.Decode(ci, &c)
+	err = Decode(ci, &c)
 
 	fmt.Println(c.Handlers[0].(*GelfConfig).Url)
 	fmt.Println(c.Handlers[1].(*FileConfig).Path)
