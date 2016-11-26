@@ -15,14 +15,14 @@
 
 
 
-package hooks_test
+package hooks
 
 import (
 	"reflect"
 	"github.com/inconshreveable/log15"
 	"gopkg.in/yaml.v2"
-	"github.com/gernoteger/mapstructure-hooks"
 	"fmt"
+	"github.com/gernoteger/mapstructure-hooks"
 )
 
 type LoggerConfig struct {
