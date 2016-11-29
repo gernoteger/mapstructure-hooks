@@ -12,16 +12,13 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-
-
-
 package hooks
 
 import (
-	"reflect"
+	"fmt"
 	"github.com/inconshreveable/log15"
 	"gopkg.in/yaml.v2"
-	"fmt"
+	"reflect"
 )
 
 type LoggerConfig struct {
@@ -29,7 +26,7 @@ type LoggerConfig struct {
 	Handlers []HandlerConfig
 }
 
-
+// HandlerConfig is the common interface
 type HandlerConfig interface {
 	NewHandler() (log15.Handler, error)
 }
@@ -37,32 +34,29 @@ type HandlerConfig interface {
 // use for registry functions
 var HandlerConfigType = reflect.TypeOf((*HandlerConfig)(nil)).Elem()
 
-
 type FileConfig struct {
-	Path	string
+	Path string
 }
 
 func (c *FileConfig) NewHandler() (log15.Handler, error) {
-	return nil,nil
+	return nil, nil
 }
 
-func NewFileConfig() interface {} {
+func NewFileConfig() interface{} {
 	return &FileConfig{}
 }
 
-
 type GelfConfig struct {
-	Url	string
+	URL string
 }
 
 func (c *GelfConfig) NewHandler() (log15.Handler, error) {
-	return nil,nil
+	return nil, nil
 }
 
-func NewGelfConfig() interface {} {
+func NewGelfConfig() interface{} {
 	return &GelfConfig{}
 }
-
 
 func ExampleDecode() {
 	var loggerConfig = `
@@ -76,7 +70,7 @@ func ExampleDecode() {
 
 	// registers all handlers
 	// put into init()
-	RegisterInterface(HandlerConfigType,"kind")
+	RegisterInterface(HandlerConfigType, "kind")
 
 	Register(HandlerConfigType, "gelf", NewGelfConfig)
 	Register(HandlerConfigType, "file", NewFileConfig)
@@ -89,11 +83,10 @@ func ExampleDecode() {
 		panic(err)
 	}
 
-
 	c := LoggerConfig{}
 	err = Decode(ci, &c)
 
-	fmt.Println(c.Handlers[0].(*GelfConfig).Url)
+	fmt.Println(c.Handlers[0].(*GelfConfig).URL)
 	fmt.Println(c.Handlers[1].(*FileConfig).Path)
 	// Output:
 	//

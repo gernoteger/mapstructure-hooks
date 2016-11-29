@@ -12,8 +12,6 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-
-
 // Package hooks helps to configure hook configurations from a map.
 // It's a wrapper around mapstructure.
 //
@@ -25,19 +23,20 @@
 package hooks
 
 import (
-	"fmt"
-	"github.com/mitchellh/mapstructure"
-	"reflect"
 	"errors"
+	"fmt"
+	"reflect"
+
+	"github.com/mitchellh/mapstructure"
 )
 
-// this file holds everything to initialize & config hook structures, e.g log writers, meters
+// this file holds everything to initialize & config hook structures, e.g log writers, meters.
 
-// a NewHookFunc creates a new instance for an registered interface.
+// NewHookFunc creates a new instance for an registered interface.
 type NewHookFunc func() interface{}
 
-type interfaceMapper  struct {
-	kindKey string	// map
+type interfaceMapper struct {
+	kindKey  string // map
 	newfuncs map[string]NewHookFunc
 }
 
@@ -49,30 +48,29 @@ func InitRegistry() {
 // the registry maps all types to their rules
 var registry = make(map[reflect.Type]*interfaceMapper)
 
-// register a new interface type; must only be called once!
-func RegisterInterface(forType reflect.Type,key string) {
-	_,found := registry[forType]
+// RegisterInterface registers a new interface type; must only be called once!
+func RegisterInterface(forType reflect.Type, key string) {
+	_, found := registry[forType]
 	if found {
-		panic(fmt.Sprintf("interface already registered: %#v",forType))
+		panic(fmt.Sprintf("interface already registered: %#v", forType))
 	}
 
-	registry[forType]=&interfaceMapper{
-		kindKey:key,
-		newfuncs:  make(map[string]NewHookFunc,2),
+	registry[forType] = &interfaceMapper{
+		kindKey:  key,
+		newfuncs: make(map[string]NewHookFunc, 2),
 	}
 }
 
 // Register registers the factory function for all instances of a given type
 // hint: provide a type for consumers with MyHookType := reflect.TypeOf((*MyHook)(nil)).Elem()
-func Register(forType reflect.Type,kind string, f func() interface{}) {
+func Register(forType reflect.Type, kind string, f func() interface{}) {
 	//fmt.Printf("hooks.Register kind='%v' for '%#v'\n", kind, forType)
 
 	im := registry[forType]
-	im.newfuncs[kind]=f
+	im.newfuncs[kind] = f
 }
 
-
-// defaultDecoderConfig returns default mapstructure.DecoderConfig with support
+// DefaultDecoderConfig returns default mapstructure.DecoderConfig with support
 // of time.Duration values and Plugins
 func DefaultDecoderConfig(output interface{}) *mapstructure.DecoderConfig {
 	return &mapstructure.DecoderConfig{
@@ -118,20 +116,20 @@ func DecodeElementsHookFunc() mapstructure.DecodeHookFunc {
 		// not obvious, but, hey, it works...
 
 		// check target
-		im,registered := registry[t]
+		im, registered := registry[t]
 		if !registered {
 			return data, nil
 		}
 
-		kind, m1, ismap,err := extractFromMap(im.kindKey, f,data)
+		kind, m1, ismap, err := extractFromMap(im.kindKey, f, data)
 		if !ismap {
 			return data, nil
 		}
 		if err != nil {
-			return data, fmt.Errorf("no kind with key '%v' found: %v",im.kindKey,err)
+			return data, fmt.Errorf("no kind with key '%v' found: %v", im.kindKey, err)
 		}
 
-		if kind=="" {
+		if kind == "" {
 			return data, errors.New("no kind found")
 		}
 
@@ -154,7 +152,7 @@ func DecodeElementsHookFunc() mapstructure.DecodeHookFunc {
 
 // RemoveFromMap removes a key from the map; the map can have strings or interfaces as key
 // if it's not  amp, an error is returned
-func extractFromMap(key string, f reflect.Type,data interface{}) (rkey string, newmap map[string]interface{},ismap bool, err error) {
+func extractFromMap(key string, f reflect.Type, data interface{}) (rkey string, newmap map[string]interface{}, ismap bool, err error) {
 
 	m1 := make(map[string]interface{})
 
@@ -182,18 +180,18 @@ func extractFromMap(key string, f reflect.Type,data interface{}) (rkey string, n
 		return "", m1, false, nil
 	}
 	if !ok {
-		return "", m1, true,fmt.Errorf("no element '%v' found", key)
+		return "", m1, true, fmt.Errorf("no element '%v' found", key)
 	}
 
-	return rkey, m1, true,nil
+	return rkey, m1, true, nil
 }
 
-type StringUnmarshaller interface {
+type stringUnmarshaller interface {
 	// Unmarshal into struct
 	UnmarshalString(from string) (interface{}, error)
 }
 
-var stringUnmarshallerType reflect.Type = reflect.TypeOf((*StringUnmarshaller)(nil)).Elem()
+var stringUnmarshallerType reflect.Type = reflect.TypeOf((*stringUnmarshaller)(nil)).Elem()
 
 // StringToStringUnmarshaller returns a DecodeHookFunc that converts
 // strings by an unmarshaller. Can be used to construct custom DecodeHookFunctions.
@@ -211,7 +209,7 @@ func StringToStringUnmarshallerHookFunc() mapstructure.DecodeHookFunc {
 			// Convert it by unmarshaller
 			//fmt.Println("=========== by struct 2")
 			e := reflect.New(t).Interface()
-			e1, err := e.(StringUnmarshaller).UnmarshalString(data.(string))
+			e1, err := e.(stringUnmarshaller).UnmarshalString(data.(string))
 			return e1, err
 		}
 

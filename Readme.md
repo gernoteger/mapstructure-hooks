@@ -1,4 +1,5 @@
 [![GoDoc](https://godoc.org/github.com/gernoteger/mapstructure-hooks?status.svg)](https://godoc.org/github.com/gernoteger/mapstructure-hooks)
+[![Go Report Card](https://goreportcard.com/badge/gernoteger/mapstructure-hooks)](https://goreportcard.com/report/gernoteger/mapstructure-hooks)
 
 # About
 
