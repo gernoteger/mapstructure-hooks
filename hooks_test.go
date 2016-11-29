@@ -1,4 +1,3 @@
-
 //Copyright 2016 Gernot Eger
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,20 +12,19 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-
-
 // plugin config über beliebiges unmarshal + github.com/mitchellh/mapstructure
 // Problemstellung: Typ des Objekts ist abhängig von Context (field "kind")
 package hooks
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"gopkg.in/yaml.v2"
+	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"reflect"
+	"gopkg.in/yaml.v2"
 )
 
 // Plugin is just an arbitrary marker interface
@@ -115,7 +113,7 @@ func TestPlugConfigWithMapstructure(t *testing.T) {
 
 	c := Config{}
 
-	RegisterInterface(pluginType,"kind1")
+	RegisterInterface(pluginType, "kind1")
 
 	Register(pluginType, "kindA", NewPlugA)                                 // defaults will be overruled
 	Register(pluginType, "kindB", func() interface{} { return NewPlugB() }) // Example of reuse of function returning concrete type
@@ -167,38 +165,38 @@ func MustParseDuration(ds string) time.Duration {
 func TestExtractFromMapByString(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
-	m:=map[string]interface{}{"alice":"foo","other":"bar"}
-	f:=reflect.TypeOf(&m).Elem()
-	k,m1,ismap,err:=extractFromMap("alice", f,m)
+	m := map[string]interface{}{"alice": "foo", "other": "bar"}
+	f := reflect.TypeOf(&m).Elem()
+	k, m1, ismap, err := extractFromMap("alice", f, m)
 	require.Nil(err)
 	require.True(ismap)
 
-	assert.Equal("foo",k)
-	assert.EqualValues(1,len(m1))
-	assert.EqualValues("bar",m1["other"])
+	assert.Equal("foo", k)
+	assert.EqualValues(1, len(m1))
+	assert.EqualValues("bar", m1["other"])
 }
 func TestExtractFromMapByInterface(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
-	m:=map[interface{}]interface{}{"alice":"foo","other":"bar"}
-	f:=reflect.TypeOf(&m).Elem()
-	k,m1,ismap,err:=extractFromMap("alice",f, m)
+	m := map[interface{}]interface{}{"alice": "foo", "other": "bar"}
+	f := reflect.TypeOf(&m).Elem()
+	k, m1, ismap, err := extractFromMap("alice", f, m)
 	require.Nil(err)
 	require.True(ismap)
 
-	assert.Equal("foo",k)
-	assert.EqualValues(1,len(m1))
-	assert.EqualValues("bar",m1["other"])
+	assert.Equal("foo", k)
+	assert.EqualValues(1, len(m1))
+	assert.EqualValues("bar", m1["other"])
 }
 func TestExtractFromMapNoMap(t *testing.T) {
 	assert := assert.New(t)
 	require := require.New(t)
-	m:="something else"
-	f:=reflect.TypeOf(&m).Elem()
-	k,m1,ismap,err:=extractFromMap("alice", f,m)
+	m := "something else"
+	f := reflect.TypeOf(&m).Elem()
+	k, m1, ismap, err := extractFromMap("alice", f, m)
 	require.Nil(err)
 	assert.False(ismap)
 	assert.Empty(k)
 
-	assert.EqualValues(0,len(m1))
+	assert.EqualValues(0, len(m1))
 }
