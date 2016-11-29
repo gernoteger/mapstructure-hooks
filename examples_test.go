@@ -16,9 +16,10 @@ package hooks
 
 import (
 	"fmt"
+	"reflect"
+
 	"github.com/inconshreveable/log15"
 	"gopkg.in/yaml.v2"
-	"reflect"
 )
 
 type LoggerConfig struct {
@@ -84,7 +85,7 @@ func ExampleDecode() {
 	}
 
 	c := LoggerConfig{}
-	err = Decode(ci, &c)
+	Decode(ci, &c)
 
 	fmt.Println(c.Handlers[0].(*GelfConfig).URL)
 	fmt.Println(c.Handlers[1].(*FileConfig).Path)
