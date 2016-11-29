@@ -150,7 +150,7 @@ func DecodeElementsHookFunc() mapstructure.DecodeHookFunc {
 	}
 }
 
-// RemoveFromMap removes a key from the map; the map can have strings or interfaces as key
+// extractFromMap removes a key from the map; the map can have strings or interfaces as key
 // if it's not  amp, an error is returned
 func extractFromMap(key string, f reflect.Type, data interface{}) (rkey string, newmap map[string]interface{}, ismap bool, err error) {
 

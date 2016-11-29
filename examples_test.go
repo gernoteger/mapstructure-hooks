@@ -85,7 +85,10 @@ func ExampleDecode() {
 	}
 
 	c := LoggerConfig{}
-	Decode(ci, &c)
+	err = Decode(ci, &c)
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Println(c.Handlers[0].(*GelfConfig).URL)
 	fmt.Println(c.Handlers[1].(*FileConfig).Path)
