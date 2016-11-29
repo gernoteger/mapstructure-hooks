@@ -191,9 +191,9 @@ type stringUnmarshaller interface {
 	UnmarshalString(from string) (interface{}, error)
 }
 
-var stringUnmarshallerType reflect.Type = reflect.TypeOf((*stringUnmarshaller)(nil)).Elem()
+var stringUnmarshallerType = reflect.TypeOf((*stringUnmarshaller)(nil)).Elem()
 
-// StringToStringUnmarshaller returns a DecodeHookFunc that converts
+// StringToStringUnmarshallerHookFunc returns a DecodeHookFunc that converts
 // strings by an unmarshaller. Can be used to construct custom DecodeHookFunctions.
 func StringToStringUnmarshallerHookFunc() mapstructure.DecodeHookFunc {
 	return func(
