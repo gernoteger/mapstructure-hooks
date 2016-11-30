@@ -60,7 +60,7 @@ func NewGelfConfig() interface{} {
 	return &GelfConfig{}
 }
 
-func ExampleDecode() {
+func Example() {
 	var loggerConfig = `
    level: INFO
    handlers:
