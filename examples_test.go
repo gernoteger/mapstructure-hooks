@@ -12,12 +12,13 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-package hooks
+package hooks_test
 
 import (
 	"fmt"
 	"reflect"
 
+	"github.com/gernoteger/mapstructure-hooks"
 	"github.com/inconshreveable/log15"
 	"gopkg.in/yaml.v2"
 )
@@ -71,10 +72,10 @@ func ExampleDecode() {
 
 	// registers all handlers
 	// put into init()
-	RegisterInterface(HandlerConfigType, "kind")
+	hooks.RegisterInterface(HandlerConfigType, "kind")
 
-	Register(HandlerConfigType, "gelf", NewGelfConfig)
-	Register(HandlerConfigType, "file", NewFileConfig)
+	hooks.Register(HandlerConfigType, "gelf", NewGelfConfig)
+	hooks.Register(HandlerConfigType, "file", NewFileConfig)
 
 	// and init your config
 
@@ -85,7 +86,7 @@ func ExampleDecode() {
 	}
 
 	c := LoggerConfig{}
-	err = Decode(ci, &c)
+	err = hooks.Decode(ci, &c)
 	if err != nil {
 		panic(err)
 	}
