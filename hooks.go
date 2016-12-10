@@ -27,6 +27,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -126,6 +127,7 @@ func DecodeElementsHookFunc() mapstructure.DecodeHookFunc {
 			return data, nil
 		}
 		if err != nil {
+			spew.Dump(data)
 			return data, fmt.Errorf("no kind with key '%v' found: %v", im.kindKey, err)
 		}
 
