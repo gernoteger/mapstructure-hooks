@@ -79,7 +79,7 @@ func (p *PlugB) Init() string {
 type Config struct {
 	GlobalName        string
 	Freq              time.Duration
-	ReconnectInterval time.Duration
+	ReconnectInterval time.Duration `mapstructure:"reconnect"`
 	Items             map[string]Plugin
 }
 
@@ -88,7 +88,7 @@ type RawKind map[string]interface{}
 var t1 = `
 globalname: hugo
 freq: 10ms
-reconnectinterval: 100us
+reconnect: 100us
 
 items:
   aaa:
@@ -107,7 +107,10 @@ items:
 `
 
 func TestPlugConfigWithMapstructure(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
+	require := require.New(t)
 
 	pluginType := reflect.TypeOf((*Plugin)(nil)).Elem()
 
@@ -126,9 +129,8 @@ func TestPlugConfigWithMapstructure(t *testing.T) {
 
 	//err = decode(ci, defaultDecoderConfig(&c))
 	err = Decode(ci, &c)
-	if err != nil {
-		t.Error(err)
-	}
+	require.Nil(err)
+
 	assert.Equal("hugo", c.GlobalName)
 
 	//logging.Dump(c,"config")
@@ -152,6 +154,26 @@ func TestPlugConfigWithMapstructure(t *testing.T) {
 
 }
 
+func TestDefaults(t *testing.T) {
+	t.Parallel()
+
+	assert := assert.New(t)
+
+	tf := time.Millisecond * 1
+	tr := time.Millisecond * 2
+	c := Config{
+		Freq:              tf,
+		ReconnectInterval: tr,
+	}
+	in := map[string]interface{}{"GlobalName": "Bar"}
+	err := Decode(in, &c)
+	assert.Nil(err)
+
+	assert.EqualValues("Bar", c.GlobalName)
+	assert.EqualValues(tf, c.Freq)
+	assert.EqualValues(tr, c.ReconnectInterval)
+}
+
 // MustParseDuration parses duration or panics.
 // Desigend as a helper for tests
 func MustParseDuration(ds string) time.Duration {
@@ -163,6 +185,8 @@ func MustParseDuration(ds string) time.Duration {
 }
 
 func TestExtractFromMapByString(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 	require := require.New(t)
 	m := map[string]interface{}{"alice": "foo", "other": "bar"}
@@ -176,6 +200,8 @@ func TestExtractFromMapByString(t *testing.T) {
 	assert.EqualValues("bar", m1["other"])
 }
 func TestExtractFromMapByInterface(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 	require := require.New(t)
 	m := map[interface{}]interface{}{"alice": "foo", "other": "bar"}
@@ -189,6 +215,8 @@ func TestExtractFromMapByInterface(t *testing.T) {
 	assert.EqualValues("bar", m1["other"])
 }
 func TestExtractFromMapNoMap(t *testing.T) {
+	t.Parallel()
+
 	assert := assert.New(t)
 	require := require.New(t)
 	m := "something else"
