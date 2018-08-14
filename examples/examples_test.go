@@ -19,7 +19,6 @@ import (
 	"reflect"
 
 	"github.com/gernoteger/mapstructure-hooks"
-	"github.com/inconshreveable/log15"
 	"gopkg.in/yaml.v2"
 )
 
@@ -28,9 +27,13 @@ type LoggerConfig struct {
 	Handlers []HandlerConfig
 }
 
+type SomeHandler interface {
+	DoHandleSomething() error
+}
+
 // HandlerConfig is the common interface
 type HandlerConfig interface {
-	NewHandler() (log15.Handler, error)
+	NewHandler() (SomeHandler, error)
 }
 
 // use for registry functions
@@ -40,7 +43,7 @@ type FileConfig struct {
 	Path string
 }
 
-func (c *FileConfig) NewHandler() (log15.Handler, error) {
+func (c *FileConfig) NewHandler() (SomeHandler, error) {
 	return nil, nil
 }
 
@@ -52,7 +55,7 @@ type GelfConfig struct {
 	URL string
 }
 
-func (c *GelfConfig) NewHandler() (log15.Handler, error) {
+func (c *GelfConfig) NewHandler() (SomeHandler, error) {
 	return nil, nil
 }
 
