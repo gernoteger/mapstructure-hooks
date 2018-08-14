@@ -30,7 +30,7 @@ type LoggerConfig struct {
 
 // HandlerConfig is the common interface
 type HandlerConfig interface {
-	NewHandler() (log15.Handler, error)
+	//NewHandler() (log15.Handler, error)
 }
 
 // use for registry functions
