@@ -12,7 +12,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-package hooks_test
+package examples
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ type LoggerConfig struct {
 
 // HandlerConfig is the common interface
 type HandlerConfig interface {
-	//NewHandler() (log15.Handler, error)
+	NewHandler() (log15.Handler, error)
 }
 
 // use for registry functions
